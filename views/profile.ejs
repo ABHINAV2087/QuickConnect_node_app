@@ -1,0 +1,60 @@
+<div id="main" style="height: 100vh; width: 100vw;overflow: hidden; ">
+    <% include ./partials/header.ejs %>
+        <h4
+            style="position: absolute;left:45%;  margin-top: 20px; padding: 10px 20px;border: 2px solid black; width: fit-content; ">
+            Your Profile</h2>
+            <div id="container"
+                style="display: flex;height:auto; width: 1200px;color: black;justify-content: center;margin-top: 50px; ">
+
+                <div id="left" style="width: 50%;justify-content: center;display: flex;">
+                    <img src="<%= user.pic %>" alt="" height="450px" width="350px">
+                </div>
+                <div id="right" style="width: 50%;display: flex; flex-direction: column; gap: 50px;margin-top: 100px;">
+                    <div id="r1">
+                        <h1
+                            style="text-align: center;padding: 5px; padding-bottom:8px;border-bottom:  1px solid black;">
+                            Hello,
+                            <span style="text-transform: capitalize;">
+                                <%= user.name %>
+                            </span>
+                            !!
+                        </h1>
+                    </div>
+                    <div id="r2" style="display: flex; flex-direction: column; gap: 10px;">
+                        <h4 style="display: flex; justify-content: space-between;"><span>Name : </span>
+                            <%= user.name %>
+                        </h4>
+                        <h4 style="display: flex; justify-content: space-between;"><span>Username : </span>
+                            <%= user.username %>
+                        </h4>
+                        <h5 style="display: flex; justify-content: space-between;"><span>Email : </span>
+                            <%= user.email %>
+                        </h5>
+                        <h5 style="display: flex; justify-content: space-between;"><span
+                                style="text-transform: capitalize;">About :</span>
+
+
+                        </h5>
+                        <p style=" font-size:medium; margin-top: -10px;">
+                            <%= user.details %>
+                        </p>
+                        <div id="btns">
+                            <a href="/feed"><button type="button" class="btn btn-primary"
+                                    style="margin-top: 50px; margin-left: 90px;">Go to Feed</button></a>
+                            <a href="/edit/<%= user._id %>"><button type="button" class="btn btn-warning"
+                                    style="margin-top: 50px; margin-left: 10px;">Update Details</button></a>
+                            <a href="/delete/<%= user._id %>"><button type="button" class="btn btn-danger"
+                                    style="margin-top: 50px; margin-left: 10px;">Delete your Account</button></a>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+</div>
+
+
+<!-- <% include ./partials/footer.ejs  %> -->
