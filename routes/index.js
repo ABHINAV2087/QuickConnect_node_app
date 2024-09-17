@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 const usermodel = require("./users")
 const postmodel = require("./post")
+const commentmodel = require("./comment")
+
 const localStrategy = require('passport-local');
 const passport = require('passport');
 
@@ -32,8 +34,8 @@ router.get('/feed', isLoggedIn, async function (req, res, next) {
 
 
   var currentuser = await usermodel.findOne({ username: req.session.passport.user })
-
-  postmodel.find().populate('owner') // jab hume sirf object id se user ki puri info chaiye hoti hai 
+  
+  postmodel.find().populate('owner').populate('commentsArr').populate({path:'commentsArr',populate:'user'}) // jab hume sirf object id se user ki puri info chaiye hoti hai 
     .then(function (allposts) {
       console.log(allposts)
       res.render('feed1', { posts: allposts, user: currentuser })
@@ -111,7 +113,7 @@ router.post("/login", passport.authenticate("local", {
   successRedirect: "/feed",
 
   failureRedirect: "/",
-  failureFlash: true,
+  
 }), function (req, res) { })
 
 router.get('/logout', function (req, res, next) {
@@ -129,7 +131,7 @@ function isLoggedIn(req, res, next) {
     res.redirect("/login")
   }
 }
-
+``
 router.get('/createpost', isLoggedIn, function (req, res, next) {
   res.render('createpost')
 })
@@ -157,17 +159,92 @@ router.get('/postlike/:postId', isLoggedIn, function (req, res, next) {
     usermodel.findOne({
       username: req.session.passport.user
     }).then(function (loggedInUser) {
-      post.likes.push(loggedInUser._id)
-      post.save().then(function (post) {
+      var indexOfLoggedInUser = post.likes.indexOf(loggedInUser._id)
+      if (indexOfLoggedInUser == -1) {
+        post.likes.push(loggedInUser._id)
+        post.save().then(function (post) {
         res.redirect("back")
-      })
-  })
+        })
+      }
+      else{
+        post.likes.splice(indexOfLoggedInUser,1)
+        post.save().then(function(post){
+          res.redirect("back") 
+        })
+      }
+
+    })
   })
 })
 
+router.post('/addcomment/:post_id', isLoggedIn, async function (req, res, next) {
+  var currentpost = await postmodel.findOne({
+    _id : req.params.post_id
+  })
+
+  var loggedInUser = await usermodel.findOne({
+    username : req.session.passport.user
+  })
+
+  var newcomment = await commentmodel.create({
+    user: loggedInUser._id,
+    data: req.body.comment,
+    time: new Date().toISOString,
+    post: currentpost._id,
+  })
+
+  currentpost.commentsArr.push(newcomment._id)
+  await currentpost.save()
+  res.redirect('back')
+});
 
 
 
+function date() {
+  let date = new Date();
+
+  // Get the month name in abbreviated form (e.g., "Jul")
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const month = monthNames[date.getMonth()];
+
+  // Get the day and year
+  const day = date.getDate();
+  const year = date.getFullYear();
+
+  // Create the formatted date string
+  const formattedDate = `${month} ${day} ${year}`;
+
+  console.log(formattedDate);
+
+}
+
+date();
+
+
+router.get('/deletecomment/:commentId', isLoggedIn, async function (req, res, next) {
+
+  var loggedInUser = await usermodel.findOne({username: req.session.passport.user})
+  var currentcomment = await commentmodel.findOne({_id: req.params.commentId}).populate('user')
+  var currentpost = await postmodel.findOne({_id: currentcomment.post}).populate('owner')
+
+ 
+
+  if( currentcomment.user.username == loggedInUser.username || currentpost.owner.username == loggedInUser.username){
+    await commentmodel.findOneAndDelete({
+      _id : currentcomment._id,
+  
+    })
+    var indexOfCurrentComment = currentpost.commentsArr.indexOf(currentcomment._id)
+    currentpost.commentsArr.splice(indexOfCurrentComment,1)
+    await currentpost.save()
+    res.redirect('back')
+
+  }
+  else{
+    res.redirect('back')
+   
+  }
+});
 
 
 

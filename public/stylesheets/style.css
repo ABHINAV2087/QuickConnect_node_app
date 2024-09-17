@@ -1,8 +1,34 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+* {
+  margin: 0px;
+  padding: 0px;
+  
+  
 }
 
-a {
-  color: #00B7FF;
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+#likebtn:hover i{
+  color: red;
+}
+#likebtn:active{
+  color: red;
+}
+.ri-heart-fill{
+  color: red;
+}
+
+#delbtn button:hover{
+ background-color: rgba(255, 0, 0, 0.519) ;
+ color: white;
+}
+#delbtn button:hover i{
+ color:white;
+}
+#delbtn button i{
+ color:red;
 }

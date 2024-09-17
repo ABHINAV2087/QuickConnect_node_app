@@ -1,39 +1,145 @@
 <div id="main" style="height: 100vh; width: 100vw; overflow: scroll;">
-    <% include ./partials/header.ejs %>
-<div id="btns" style="position: absolute;right:2% ; top: 10%; display: flex; gap: 20px; align-items:center ;flex-direction: column;z-index: 11111;">
-  <img src="<%= user.pic %>" alt="" style="height: 70px;width: 70px;border-radius: 50%;border: 1px solid black;object-fit:cover ;">  
-  <a href="/profile" ><button type="button" class="btn btn-info " >Go to Your profile</button></a>
-    
-</div>
- <div  class="container d-flex flex-wrap" style="padding: 70px 50px ; gap: 30px;">
-    <% posts.forEach(function(post){ %>
-        <div class="card" style="width: 18rem;border: 1px solid black;">
-          <div id="posthead" style="border-bottom: 1px solid black;" >
-          <h7 class="card-title" style=" text-align: center; text-transform: capitalize;display: flex;align-items: center;padding-left: 10px; padding-bottom:1px;padding-top: 10px;gap: 20px;">
-            <img src="<%= post.owner.pic %>" style="height: 40px; width: 40px; object-fit: contain; border-radius: 50%;" alt="">
-            <a href="/profile/<%= user._id %>" class="" style="display: flex;text-decoration: none;color: black; "><%= post.owner.username %></a>
-            
-          </h7>
-        </div>
-          
-          <div id="img" style="display: flex; justify-content: center;border-bottom: 1px solid black; ">
-            <img src="<%= post.Image %>" class="card-img-top" alt="..." style="width: 12rem; height: 12rem; object-fit: contain; ">
-          </div> 
-         
-            <div class="card-body" style="display: flex;width: 100%;flex-direction: column;margin-top: -20px;">
-              
-              <div id="likebtn" style="display: flex;justify-content: flex-end; align-items: center;gap: 10px;">
-                <a href="/postlike/<%= post._id %>" style="text-decoration: none;color: brown;font-size: 1.5rem;"><i class="ri-heart-line"></i></a>
-                <p style="font-size: 15px;margin-top: 15px;"><%= post.likes.length %></p>
+  <% include ./partials/header.ejs %>
+    <div id="btns"
+      style="position: absolute;right:2% ; top: 10%; display: flex; gap: 20px; align-items:center ;flex-direction: column;z-index: 11111;">
+      <img src="<%= user.pic %>" alt=""
+        style="height: 70px;width: 70px;border-radius: 50%;border: 1px solid black;object-fit:cover ;">
+      <a href="/profile"><button type="button" class="btn btn-info ">Go to Your profile</button></a>
+
+    </div>
+
+    <div class="container d-flex flex-wrap" id="box1" style="padding: 70px 50px ; gap: 30px;">
+      <% posts.forEach(function(post){ %>
+
+        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+          aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Add comment !!</h5>
+                <button type="button" style="padding: 5px 10px;" class="close" data-bs-dismiss="modal"
+                  aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
               </div>
-              
-              <p style=" text-transform: capitalize;font-size:0.85rem; margin-top: -13px;"><%= post.caption %></p>
-             
-              
+              <div class="modal-body">
+                <form id="addcomment" action="/addcomment/<%= post._id%>" method="post">
+                  <input class="w-100" name="comment" style="padding: 5px 10px;" type="text"
+                    placeholder="Add comment on this post">
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <input form="addcomment" type="submit" class="btn btn-primary " value="Add your comment"></input>
+              </div>
             </div>
           </div>
-    <% }) %> 
- </div>
+        </div>
+
+
+        <div class="card" style="width: 18rem;border: 1px solid black;">
+          <div id="posthead" style="border-bottom: 1px solid black;">
+            <h7 class="card-title"
+              style=" text-align: center; text-transform: capitalize;display: flex;align-items: center;padding-left: 10px; padding-bottom:1px;padding-top: 10px;gap: 20px;">
+              <img src="<%= post.owner.pic %>"
+                style="height: 30px; width: 30px; object-fit: contain; border-radius: 50%; border: 2px solid grey; padding: 5px;" alt="">
+              <a href="/profile/<%= user._id %>" class="" style="display: flex;text-decoration: none;color: black; ">
+                <%= post.owner.username %>
+              </a>
+
+            </h7>
+          </div>
+
+          <div id="img" style="display: flex; justify-content: center;border-bottom: 1px solid black; ">
+            <img src="<%= post.Image %>" class="card-img-top" alt="..."
+              style="width: 15rem; height: 15rem; object-fit: contain; ">
+          </div>
+
+          <div class="card-body" style="display: flex;width: 100%;flex-direction: column;margin-top: -20px;">
+
+            <div class="likebtn" style="display: flex;justify-content: flex-end; align-items: center;gap: 7px;">
+              <button title="comment !!" type="button" class="btn btn-primary" data-bs-toggle="modal"
+                data-bs-target="#exampleModalCenter" style="background-color: transparent; border: none;">
+
+                
+                <i class="ri-question-answer-fill" style="color: black;font-size: 1.5rem;"></i>
+              </button>
+              <a href="/postlike/<%= post._id %>" style="text-decoration: none;color: brown;font-size: 1.5rem;"><button
+                  title="like !!" style="background: transparent;border: none;"><i onclick="toggle()" id="likebtn"
+                    class="ri-heart-fill"></button></i></a>
+              <p style="font-size: 15px;margin-top: 15px;">
+                <%= post.likes.length %>
+              </p>
+            </div>
+
+
+            <p style=" text-transform: capitalize;font-size:0.85rem; margin-top: -5px;"><i>
+                <%= post.caption %>
+              </i></p>
+
+            <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog"
+              aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Comments</h5>
+                    <button style="padding: 5px 10px;" type="button" class="close" data-bs-dismiss="modal"
+                      aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body" style="display: flex; flex-direction: column; gap: 25px;">
+                    <% post.commentsArr.forEach(function(comment){ %>
+                      <div id="com-line"
+                        style="display: flex; flex-direction: column;  padding: 15px; border: 1px solid grey;">
+                        <div id="userinfocom" style="display: flex;justify-content: space-between;align-items: center; ">
+                          <div id="left" style="display: flex;gap: 10px; align-items: center;">
+                            <img src="<%= comment.user.pic %>" alt=""
+                              style="height: 30px; width: 30px; border-radius: 50%;">
+                            <p style="font-size: 0.75rem; margin-top: 10px;">@<%= comment.user.username%>
+                            </p>
+                          </div>
+                          <div id="right">
+                            <h8 style="font-size: 0.70rem; ">
+                              <%= comment.time %>
+                            </h8>
+                            
+                          </div>
+                          <div id="delbtn">
+                           <a href="/deletecomment/<%= comment._id %>"> <button style="padding: 5px 10px;border: 1px solid black; border-radius: 40px;"><i class="ri-delete-bin-line"></i></button></a>
+                          </div>
+                        </div>
+                        <h7 style="margin-left: 40px;">
+                          <%= comment.data %>
+                        </h7>
+                        
+                      </div>
+                    <% }) %>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModalLong">
+              Show Comments
+            </button>
+
+
+
+          </div>
+        </div>
+
+
+
+
+
+
+
+        <% }) %>
+    </div>
 
 
 
@@ -41,4 +147,4 @@
 </div>
 
 
-<!-- <% include ./partials/footer.ejs  %> -->
+<% include ./partials/footer.ejs %>

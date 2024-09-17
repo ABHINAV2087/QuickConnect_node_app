@@ -14,6 +14,12 @@ var postschema = mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: 'user'
         }
+    ],
+    commentsArr: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'comment'
+        }
     ]
 
 })

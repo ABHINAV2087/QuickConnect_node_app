@@ -1,22 +1,30 @@
-const mongoose = require('mongoose')
-const { strategies } = require('passport')
-const plm = require('passport-local-mongoose')
+const mongoose = require('mongoose');
+const { strategies } = require('passport');
+const plm = require('passport-local-mongoose');
+require('dotenv').config(); // Ensure you have dotenv installed
 
-mongoose.connect("mongodb://127.0.0.1:27017/minifacebookprj")
+// Connect to MongoDB Atlas
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log('Connected to MongoDB'))
+.catch(err => console.error('Could not connect to MongoDB...', err));
 
-const userSchema = mongoose.Schema(
+// Define the schema
+const userSchema = new mongoose.Schema(
   {
     username: String,
     name: String,
     email: String,
     password: String,
     pic: String,
-    details:String,
+    details: String,
   }
-)
+);
 
-userSchema.plugin(plm)
+// Plugin passport-local-mongoose for authentication
+userSchema.plugin(plm);
 
-module.exports= mongoose.model("user",userSchema)
-
-
+// Export the model
+module.exports = mongoose.model('user', userSchema);
